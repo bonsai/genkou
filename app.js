@@ -35,3 +35,52 @@ document.querySelector("#copy").addEventListener("click", async () => {
 });
 
 render("");
+
+
+/*
+ * HTMX generation response:
+ * The API may return JSON. Do not let JSON enter the DOM.
+ * app.js extracts the generated text, trims it to exactly 400 characters
+ * (when longer), then renders it into the 20 x 20 manuscript grid.
+ */
+document.body.addEventListener("htmx:afterRequest", (event) => {
+  const xhr = event.detail?.xhr;
+  const trigger = event.detail?.elt;
+  if (!xhr || !trigger || trigger.getAttribute("hx-post") !== "/generate") return;
+  if (xhr.status < 200 || xhr.status >= 300) return;
+
+  let payload;
+  try {
+    payload = JSON.parse(xhr.responseText);
+  } catch {
+    payload = xhr.responseText;
+  }
+
+  const generated = extractText(payload);
+  if (!generated) return;
+
+  const text = normalize(generated).join("");
+  source.value = text;
+  render(text);
+  const generatedBox = document.querySelector("#generated");
+  if (generatedBox) generatedBox.textContent = "生成結果を400字原稿用紙へ配置しました。";
+});
+
+function extractText(value) {
+  if (typeof value === "string") return value;
+  if (!value || typeof value !== "object") return "";
+
+  const preferred = ["text", "content", "output", "answer", "generated", "result"];
+  for (const key of preferred) {
+    if (typeof value[key] === "string") return value[key];
+  }
+
+  for (const key of preferred) {
+    if (value[key] && typeof value[key] === "object") {
+      const found = extractText(value[key]);
+      if (found) return found;
+    }
+  }
+
+  return "";
+}
