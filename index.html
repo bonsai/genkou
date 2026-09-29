@@ -34,7 +34,7 @@ small{color:#666}
 <header><h1>genkou / 400字原稿用紙</h1><small>20 × 20</small></header>
 <main>
 <section class="panel">
-<textarea id="source" placeholder="ここに原稿を書いてください。400字まで表示します。"></textarea>
+<textarea id="source" name="source" placeholder="ここに原稿を書いてください。400字まで表示します。"></textarea>
 <div class="stats"><span id="count">0</span> / 400字</div>
 <div class="controls">
 <button type="button" id="clear">クリア</button>
@@ -42,7 +42,7 @@ small{color:#666}
 <button type="button" onclick="window.print()">印刷 / PDF</button>
 </div>
 <div class="controls">
-<button hx-post="/generate" hx-include="#source" hx-target="#generated" hx-swap="innerHTML">生成</button>
+<button hx-post="/generate" hx-include="#source" hx-target="#generated" hx-swap="none">生成</button>
 </div>
 <div id="generated"><small>「生成」は /generate を実装したバックエンドと接続できます。</small></div>
 </section>
