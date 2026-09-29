@@ -3,53 +3,69 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>genkou — 400字原稿用紙</title>
-<script src="https://unpkg.com/htmx.org@2.0.4"></script>
+<title>genkou — 原稿用紙</title>
 <style>
 *{box-sizing:border-box}
-:root{--paper:#fffdf7;--ink:#171717;--line:#9b8f7d;--bg:#eeeae2}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif}
-header{padding:18px 22px;display:flex;gap:16px;align-items:center;justify-content:space-between}
-h1{font-size:18px;margin:0}
-main{display:grid;grid-template-columns:minmax(280px,420px) minmax(420px,1fr);gap:24px;padding:0 22px 40px;align-items:start}
-.panel{background:#fff;padding:16px;border:1px solid #ddd;border-radius:10px;position:sticky;top:16px}
-textarea{width:100%;height:300px;resize:vertical;border:1px solid #bbb;padding:12px;font:16px/1.7 "Noto Serif JP",serif}
-.controls{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
-button{border:1px solid #777;background:#fff;padding:8px 12px;border-radius:6px;cursor:pointer}
-button:hover{background:#f3f0ea}
-.stats{font-size:13px;color:#555;margin:8px 0}
-.paper-wrap{overflow:auto;padding:8px}
-.paper{width:min(92vw,620px);aspect-ratio:1/1;background:var(--paper);margin:auto;padding:20px;box-shadow:0 3px 18px #0002}
-.grid{width:100%;height:100%;display:grid;grid-template-columns:repeat(20,1fr);grid-template-rows:repeat(20,1fr);border:1.5px solid var(--line)}
-.cell{display:flex;align-items:center;justify-content:center;border-left:1px solid var(--line);border-top:1px solid var(--line);font:clamp(12px,2.0vw,25px)/1 "Noto Serif JP",serif;white-space:pre}
+:root{--paper:#fffdf7;--ink:#171717;--line:#8f877b;--bg:#eeeae2}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink)}
+body{font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif}
+header{height:52px;padding:12px 18px;display:flex;justify-content:space-between;align-items:center}
+h1{font-size:15px;margin:0;font-weight:600}
+a{color:inherit}
+.paper-wrap{padding:12px 18px 40px;overflow:auto}
+.paper{
+  width:200mm;
+  height:200mm;
+  min-width:200mm;
+  min-height:200mm;
+  margin:0 auto;
+  padding:0;
+  background:var(--paper);
+  box-shadow:0 3px 18px #0002;
+}
+.grid{
+  width:200mm;height:200mm;
+  display:grid;
+  grid-template-columns:repeat(20,10mm);
+  grid-template-rows:repeat(20,10mm);
+  border:0.3mm solid var(--line);
+}
+.cell{
+  width:10mm;height:10mm;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-left:0.2mm solid var(--line);
+  border-top:0.2mm solid var(--line);
+  font:7.2mm/1 "Noto Serif JP","Yu Mincho",serif;
+  overflow:hidden;
+}
 .cell:nth-child(-n+20){border-top:0}
 .cell:nth-child(20n+1){border-left:0}
-.cell.br{position:relative}
-.cell.br:after{content:"";position:absolute;inset:0;background:linear-gradient(135deg,transparent 47%,#b8ad9c 48%,transparent 50%);opacity:.18}
-small{color:#666}
-@media(max-width:800px){main{grid-template-columns:1fr}.panel{position:static}.paper{width:94vw}}
+.cell.br:after{content:"";position:absolute}
+.meta{position:fixed;right:16px;bottom:14px;font-size:12px;color:#666}
+@media print{
+  @page{size:A4 portrait;margin:0}
+  html,body{background:#fff}
+  header,.meta{display:none}
+  .paper-wrap{padding:0;overflow:visible}
+  .paper{margin:0;box-shadow:none}
+}
+@media(max-width:210mm){
+  .paper-wrap{padding:0}
+  .paper{transform-origin:top left;transform:scale(calc((100vw - 16px) / 200mm));margin:0}
+}
 </style>
 </head>
 <body>
-<header><h1>genkou / 400字原稿用紙</h1><small>20 × 20</small></header>
-<main>
-<section class="panel">
-<textarea id="source" name="source" placeholder="ここに原稿を書いてください。400字まで表示します。"></textarea>
-<div class="stats"><span id="count">0</span> / 400字</div>
-<div class="controls">
-<button type="button" id="clear">クリア</button>
-<button type="button" id="copy">本文をコピー</button>
-<button type="button" onclick="window.print()">印刷 / PDF</button>
-</div>
-<div class="controls">
-<button hx-post="/generate" hx-include="#source" hx-target="#generated" hx-swap="none">生成</button>
-</div>
-<div id="generated"><small>「生成」は /generate を実装したバックエンドと接続できます。</small></div>
-</section>
-<section class="paper-wrap">
-<div class="paper"><div id="grid" class="grid" aria-label="400字原稿用紙"></div></div>
-</section>
+<header>
+  <h1>genkou / 400字原稿用紙</h1>
+  <a href="./input.html">入力</a>
+</header>
+<main class="paper-wrap">
+  <div class="paper"><div id="grid" class="grid" aria-label="400字原稿用紙"></div></div>
 </main>
+<div class="meta">JIS S 5508:2010 の20字×20字・10mmますけいに合わせた表示</div>
 <script src="./app.js"></script>
 </body>
 </html>
